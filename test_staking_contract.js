@@ -59,26 +59,100 @@ switch (configSetting) {
     console.log(`please choose a configuration `);
 }
 
-const STAKING_CONTRACT_ID = "staking_test_5.xuguangxia.testnet";
-const TOKEN_CONTRACT_ID = "vac_token_test_4.xuguangxia.testnet";
-const NFT_CONTRACT_ID = "5.anul.testnet";
+const STAKING_CONTRACT_ID = "masterchef_test_1.xuguangxia.testnet";
+const TOKEN_A_CONTRACT_ID = "masterchef_test_2.xuguangxia.testnet";
+const TOKEN_B_CONTRACT_ID = "masterchef_test_3.xuguangxia.testnet";
+const TOKEN_C_CONTRACT_ID = "masterchef_test_4.xuguangxia.testnet";
 
 const Test = async () => {
   //Load Your Account
   const near = await connect(config);
 
   // STEP 4 enter your mainnet or testnet account name here!
-  const account = await near.account("pixel8testing2.testnet");
+  const account = await near.account("xuguangxia.testnet");
 
   let result;
+
   result = await account.viewFunction(
-    TOKEN_CONTRACT_ID,
+    TOKEN_A_CONTRACT_ID,
     "ft_balance_of",
     {
       account_id: account.accountId,
     }
   ); 
-  console.log("VACAmount:", result);
+  console.log("Token_A_Balance:", result);
+
+  result = await account.viewFunction(
+    TOKEN_B_CONTRACT_ID,
+    "ft_balance_of",
+    {
+      account_id: account.accountId,
+    }
+  ); 
+  console.log("Token_B_Balance:", result);
+
+  result = await account.viewFunction(
+    TOKEN_C_CONTRACT_ID,
+    "ft_balance_of",
+    {
+      account_id: account.accountId,
+    }
+  ); 
+  console.log("Token_C_Balance:", result);
+
+  // STAKING
+  // result = await account.functionCall({
+  //   contractId: TOKEN_A_CONTRACT_ID,
+  //   methodName: "ft_transfer_call",
+  //   args: {
+  //     receiver_id: STAKING_CONTRACT_ID,
+  //     amount: "1000000000000000000000000",
+  //     msg: JSON.stringify({ staking_status: "Stake to Platform" })
+  //   },
+  //   gas: MAX_GAS,
+  //   attachedDeposit: "1",
+  // });
+  // console.log("Staking A token");
+
+  // result = await account.functionCall({
+  //   contractId: TOKEN_B_CONTRACT_ID,
+  //   methodName: "ft_transfer_call",
+  //   args: {
+  //     receiver_id: STAKING_CONTRACT_ID,
+  //     amount: "1000000000000000000000000",
+  //     msg: JSON.stringify({ staking_status: "Stake to Platform" })
+  //   },
+  //   gas: MAX_GAS,
+  //   attachedDeposit: "1",
+  // });
+  // console.log("Staking B token");
+
+  // result = await account.viewFunction(
+  //   TOKEN_A_CONTRACT_ID,
+  //   "ft_balance_of",
+  //   {
+  //     account_id: account.accountId,
+  //   }
+  // ); 
+  // console.log("Token_A_Balance:", result);
+
+  // result = await account.viewFunction(
+  //   TOKEN_B_CONTRACT_ID,
+  //   "ft_balance_of",
+  //   {
+  //     account_id: account.accountId,
+  //   }
+  // ); 
+  // console.log("Token_B_Balance:", result);
+
+  // result = await account.viewFunction(
+  //   TOKEN_C_CONTRACT_ID,
+  //   "ft_balance_of",
+  //   {
+  //     account_id: account.accountId,
+  //   }
+  // ); 
+  // console.log("Token_C_Balance:", result);
 
   result = await account.viewFunction(
     STAKING_CONTRACT_ID,
@@ -87,20 +161,7 @@ const Test = async () => {
       account_id: account.accountId,
     }
   ); 
-  console.log("ClaimAmout:", result);
-
-  // STAKING
-  // result = await account.functionCall({
-  //   contractId: NFT_CONTRACT_ID,
-  //   methodName: "nft_approve",
-  //   args: {
-  //     token_id: "QmVmz2KGaWW9qWvzajHSGNjpx1odxaXBaCGeaNwd8JsFyo",
-  //     account_id: STAKING_CONTRACT_ID,
-  //     msg: JSON.stringify({ staking_status: "Stake to Platform" })
-  //   },
-  //   gas: MAX_GAS,
-  //   attachedDeposit: DEPOSIT,
-  // });
+  console.log("ClaimAmount:", result);
 
   // CLAIMING
   // result = await account.functionCall({
@@ -111,19 +172,47 @@ const Test = async () => {
   //   gas: MAX_GAS,
   //   attachedDeposit: "1",
   // });
-  // console.log(result);
+  // console.log("Claimed");
 
   // UNSTAKING
   // result = await account.functionCall({
   //   contractId: STAKING_CONTRACT_ID,
   //   methodName: "unstake",
   //   args: {
-  //     token_id: "QmVmz2KGaWW9qWvzajHSGNjpx1odxaXBaCGeaNwd8JsFyo" 
+  //     token_type: TOKEN_A_CONTRACT_ID,
+  //     amount: "500000000000000000000000"
   //   },
   //   gas: MAX_GAS,
   //   attachedDeposit: "1",
   // });
-  // console.log(result);
+  // console.log("Unstaked A Token");
+
+  // result = await account.viewFunction(
+  //   TOKEN_A_CONTRACT_ID,
+  //   "ft_balance_of",
+  //   {
+  //     account_id: account.accountId,
+  //   }
+  // ); 
+  // console.log("Token_A_Balance:", result);
+
+  // result = await account.viewFunction(
+  //   TOKEN_B_CONTRACT_ID,
+  //   "ft_balance_of",
+  //   {
+  //     account_id: account.accountId,
+  //   }
+  // ); 
+  // console.log("Token_B_Balance:", result);
+
+  // result = await account.viewFunction(
+  //   TOKEN_C_CONTRACT_ID,
+  //   "ft_balance_of",
+  //   {
+  //     account_id: account.accountId,
+  //   }
+  // ); 
+  // console.log("Token_C_Balance:", result);
 };
 
 Test();

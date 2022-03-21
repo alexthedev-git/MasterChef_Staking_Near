@@ -219,6 +219,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1bf2e165bb3457c8e098ea76f3e3bc9db55f87aa90d52d0e6be741470916aaa4"
 
 [[package]]
+name = "masterchef_staking"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "near-sdk",
+]
+
+[[package]]
 name = "memchr"
 version = "2.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -576,14 +584,6 @@ name = "version_check"
 version = "0.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b5a972e5669d67ba988ce3dc826706fb0a8b01471c088cb0b6110b805cc36aed"
-
-[[package]]
-name = "vexedapes_staking"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "near-sdk",
-]
 
 [[package]]
 name = "wasi"

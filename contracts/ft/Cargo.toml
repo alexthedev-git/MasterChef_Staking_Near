@@ -1,5 +1,5 @@
 [package]
-name = "VAC_Token"
+name = "token"
 version = "0.1.0"
 authors = ["CleverSos"]
 edition = "2018"

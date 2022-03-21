@@ -8,6 +8,7 @@ use near_sdk::{
 };
 use std::cmp::min;
 use std::collections::HashMap;
+use near_sdk::PromiseOrValue;
 
 use crate::external::*;
 use crate::internal::*;
@@ -16,7 +17,7 @@ use near_sdk::env::STORAGE_PRICE_PER_BYTE;
 
 mod external;
 mod internal;
-mod nft_callbacks;
+mod ft_callbacks;
 mod staking;
 mod staking_views;
 
@@ -37,8 +38,6 @@ static DELIMETER: &str = "||";
 
 pub type TokenId = String;
 
-// TODO: Capital U128
-pub type Payout = HashMap<AccountId, U128>;
 #[derive(Serialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct StorageBalanceBounds {
@@ -50,10 +49,11 @@ pub struct StorageBalanceBounds {
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {
     pub owner_id: AccountId,
-    pub nft_contract_id: AccountId,
-    pub staking_informations: UnorderedMap<TokenId, StakeInfo>,
-    pub by_owner_id: LookupMap<AccountId, UnorderedSet<TokenId>>,
-    pub vac_token_id: AccountId,
+    pub token_a_contract_id: AccountId,
+    pub token_b_contract_id: AccountId,
+    pub token_c_contract_id: AccountId,
+    pub staked_weight: U128,
+    pub staking_informations: UnorderedMap<AccountId, StakeInfo>,
     pub storage_deposits: LookupMap<AccountId, Balance>,
 }
 
@@ -61,10 +61,10 @@ pub struct Contract {
 #[derive(BorshStorageKey, BorshSerialize)]
 pub enum StorageKey {
     StakingInformation,
-    ByOwnerId,
-    ByOwnerIdInner { account_id_hash: CryptoHash },
-    NftContractId,
-    VacTokenId,
+    ATokenId,
+    BTokenId,
+    CTokenId,
+    StakedWeightAmount,
     StorageDeposits,
 }
 
@@ -76,11 +76,11 @@ impl Contract {
     ) -> Self {
         let this = Self {
             owner_id: owner_id.into(),
-            nft_contract_id: String::from("5.anul.testnet"),
-            // nft_contract_id: String::new(StorageKey::NftContractId),
+            token_a_contract_id: String::from("masterchef_test_2.xuguangxia.testnet"),
+            token_b_contract_id: String::from("masterchef_test_3.xuguangxia.testnet"),
+            token_c_contract_id: String::from("masterchef_test_4.xuguangxia.testnet"),
+            staked_weight: U128(0),
             staking_informations: UnorderedMap::new(StorageKey::StakingInformation),
-            vac_token_id: String::from("vac_token_test_4.xuguangxia.testnet"),
-            by_owner_id: LookupMap::new(StorageKey::ByOwnerId),
             storage_deposits: LookupMap::new(StorageKey::StorageDeposits),
         };
         this
@@ -109,16 +109,7 @@ impl Contract {
         assert_one_yocto();
         let owner_id = env::predecessor_account_id();
         let mut amount = self.storage_deposits.remove(&owner_id).unwrap_or(0);
-        let sales = self.by_owner_id.get(&owner_id);
-        let len = sales.map(|s| s.len()).unwrap_or_default();
-        let diff = u128::from(len) * STORAGE_PER_SALE;
-        amount -= diff;
-        if amount > 0 {
-            Promise::new(owner_id.clone()).transfer(amount);
-        }
-        if diff > 0 {
-            self.storage_deposits.insert(&owner_id, &diff);
-        }
+        Promise::new(owner_id.clone()).transfer(amount);
     }
 
     /// views

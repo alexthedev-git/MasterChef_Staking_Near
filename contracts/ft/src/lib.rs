@@ -56,13 +56,13 @@ impl Default for Contract {
 #[near_bindgen]
 impl Contract {
     #[init]
-    pub fn new(owner_id: ValidAccountId) -> Self {
+    pub fn new(owner_id: ValidAccountId, token_name: String, token_symbol: String, account_name: String, account_amount: U128) -> Self {
         assert!(!env::state_exists(), "Already initialized");
 
         let mut this = Self {
             owner_id: owner_id.clone().into(),
             accounts: LookupMap::new(b"a".to_vec()),
-            total_supply: 10000000,
+            total_supply: 10000000000000000000000000000000,
             account_storage_usage: 0,
             ft_metadata: FungibleTokenMetadata {
                 version: "V1".to_string(),
@@ -80,15 +80,11 @@ impl Contract {
         this.account_storage_usage = env::storage_usage() - initial_storage_usage;
         this.accounts.remove(&tmp_account_id);
         // Make owner have total supply
-        let total_supply_u128: u128 = 10000000;
-        let half_supply_u128: u128 = 5000000;
-        let staking_account_id: AccountId = String::from("staking_test_5.xuguangxia.testnet");
-        this.accounts.insert(&owner_id.as_ref(), &half_supply_u128);
-        this.accounts.insert(&staking_account_id, &half_supply_u128);
+        let total_supply_u128: u128 = 10000000000000000000000000000000;
+        this.accounts.insert(&account_name, &u128::from(account_amount));
+        this.accounts.insert(&owner_id.as_ref(), &u128::from(total_supply_u128).checked_sub(u128::from(account_amount)).unwrap());
         this
     }
-
-    /// Custom Methods
 
     /// only owner can mint
     pub fn mint(&mut self, amount: U128) {
